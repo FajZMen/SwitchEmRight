@@ -360,8 +360,8 @@ def endrun():
 
 def how2play():
     st.title("How to Play")
-    st.write("""Disclaimer: This game requires strong brain power and a god-like reading reflexes to play.""")
-    st.write("")
+    st.write("Welcome to SwitchEmRight! This is a simple game that only uses Brain power and Reading Skills!")
+    st.write("If you're new here, you can check out the 'Basics' Page to get started.")
 
 def basicsh2p():
     st.title("Basics")
