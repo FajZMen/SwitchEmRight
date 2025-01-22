@@ -44,7 +44,7 @@ def getstates():
 # ///// -------------------------------------------------------------- Page ---------------------------------------------------------- /////
 def mainpage():
     st.title("Welcome to Switch Em Right! (Game)")
-    st.write("A Game where you use your Brain and Reading Skills to toggle switches better!")
+    st.write("A very simple Game where you use your Brain and Reading Skills to toggle switches better!")
     st.write("But before you Play, Please Login (If you already have an account) or Register first!")
 
 def playnormal():
