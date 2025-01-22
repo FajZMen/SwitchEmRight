@@ -1569,7 +1569,7 @@ def playtutorial():
     st.rerun()
 
 def aboutme():
-    st.image("Other/Ok.jpg")
+    st.image("Other/HEHEHEHA.jpeg")
     st.title("About Me")
     st.write("Hiya there!, im Fajar or FajZ whatever you wanna call me with, an Indonesian Developer who made this dumb silly web project cuz im bored. anyway have fun xd.")
 
