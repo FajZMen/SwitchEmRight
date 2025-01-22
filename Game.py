@@ -174,7 +174,7 @@ elif st.session_state.developerlogin:
             if st.session_state.developerpanelaccess == False:
                 getaccesbruh = st.text_input("To get access you must enter the Forbidden Password", type="password")
                 if st.button("Submit"):
-                    if getaccesbruh == "ZSTL":
+                    if getaccesbruh == "ThisIsTheApexDeveloperPanelPasswordToGetAccess2222222":
                         st.session_state.developerpanelaccess = True
                         st.rerun()
                     else:
