@@ -36,7 +36,7 @@ useraccounts = [
 ]
 
 normallb = [
-    {"name": "FajZ", "level": "52"},
+    {"name": "FajZ", "level": "62"},
     {"name": "???", "level": "???"},
     {"name": "???", "level": "???"},
     {"name": "???", "level": "???"},
