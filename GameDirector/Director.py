@@ -332,9 +332,9 @@ def customdesc():
     
     st.header("General Settings")
     switches = st.slider("Amount of Switches", 4, 100, 10)
-    time_limit = st.slider("Time Limit (seconds)", 30, 1200, 120)
-    hints = st.slider("Amount of Hints", 0, 30, 3)
-    penalty = st.slider("Wrong Submit Penalty (seconds)", 5, 200, 15)
+    time_limit = st.slider("Time Limit (seconds)", 30, 3600, 120)
+    hints = st.slider("Amount of Hints", 0, 100, 3)
+    penalty = st.slider("Wrong Submit Penalty (seconds)", 5, 500, 15)
     replay_speed = st.slider("Switch State Replay Speed", 0.1, 5.0, 1.0)
     replayfaster = st.checkbox("Replay Speed gets Faster")
     if replayfaster:
