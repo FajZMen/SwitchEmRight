@@ -4,7 +4,7 @@ from random import shuffle
 import streamlit as st
 import time
 from streamlit_extras.stoggle import stoggle
-from GameStuffs.Gamedata import switchlayout, switchlayouttest, useraccounts, bannedaccounts, normallb, hardcorelb, achievementsinventory, normalgr, hardcoregr, braindestroyergr, godspeedgr, perfectpercisiongr, makehastegr, sneakyswitchesgr, eminemgr, brainanuerysmgr, examgr, glitchgr
+from GameStuffs.Gamedata import switchlayout, switchlayouttest, useraccounts, bannedaccounts, normallb, hardcorelb, achievementsinventory, normalgr, hardcoregr, braindestroyergr, godspeedgr, perfectpercisiongr, makehastegr, sneakyswitchesgr, eminemgr, brainanuerysmgr, examgr, glitchgr, achievements
 
 def getstates():
     if "currentlevel" not in st.session_state:
@@ -39,13 +39,18 @@ def getstates():
         st.session_state.tutorialstage = 0 
     if "glitch" not in st.session_state:
         st.session_state.glitch = 0
+    
+    #for Custom Mode
+    if "custtime" not in st.session_state:
+        st.session_state.custtime = 0
 
 
 # ///// -------------------------------------------------------------- Page ---------------------------------------------------------- /////
 def mainpage():
     st.title("Welcome to Switch Em Right! (Game)")
-    st.write("A very simple Game where you use your Brain and Reading Skills to toggle switches better!")
+    st.write("A Game where you use your Brain and Reading Skills to toggle switches better!")
     st.write("But before you Play, Please Login (If you already have an account) or Register first!")
+    st.write("Or if ur lazy just login with Username and Password 'Player' (YOU WONT GET ANY PROGRESSION IF UR USING THIS!) ")
 
 def playnormal():
     st.session_state.max_time = 161
@@ -92,6 +97,7 @@ def playhardcore():
 
 def purememorydesc():
     st.title("Pure Memory Mode")
+    st.write("Lets see if your brain can remember well")
     stoggle("Settings", """Pure Memory mode settings:
         
         --Bad Stuff--
@@ -111,7 +117,10 @@ def playpurememory():
     st.session_state.currentlevel = 1
     st.session_state.difficulty = "RememberThem"
     SwitchRandomizer()
-    st.session_state.currentpage = "PureMemoryGame"
+    if st.session_state.loggedin:
+        st.session_state.currentpage = "PureMemoryGame"
+    else:
+        st.session_state.currentpage = "DevPMGame"
     st.rerun()
 
 def godspeeddesc():
@@ -317,6 +326,69 @@ def playglitched():
     st.session_state.currentpage = "GlitchedGame"
     st.rerun()
 
+def customdesc():
+    st.title("Custom Mode")
+    st.write("Customize the difficulty of your Run!")
+    
+    st.header("General Settings")
+    switches = st.slider("Amount of Switches", 4, 100, 10)
+    time_limit = st.slider("Time Limit (seconds)", 30, 1200, 120)
+    hints = st.slider("Amount of Hints", 0, 30, 3)
+    penalty = st.slider("Wrong Submit Penalty (seconds)", 5, 200, 15)
+    replay_speed = st.slider("Switch State Replay Speed", 0.1, 5.0, 1.0)
+    replayfaster = st.checkbox("Replay Speed gets Faster")
+    if replayfaster:
+        replaydecay = st.slider("Replay speed decay amount every level", 0.01, 1.0, 0.1)
+        maxreplayspeed = st.slider("Maximum Replay Speed", 0.1, replay_speed, replay_speed)
+    else:
+        replaydecay = 0
+        maxreplayspeed = 0
+    shown_switches = st.slider("Switches Shown in Replay", 1, switches, switches)
+    
+    no_level_limit = st.checkbox("No Level Limit")
+    if not no_level_limit:
+        level_limit = st.slider("Level Limit", 5, 10000, 100)
+    else:
+        level_limit = float('inf')
+        
+    st.header("Special Settings")
+    timer_no_reset = st.checkbox("Timer Doesn't Reset")
+    hide_timer = st.checkbox("Hidden Timer")
+    random_speed = st.checkbox("Random Replay Speed")
+    glitchy_state = st.checkbox("Glitchy Switch States")
+    perfect_mode = st.checkbox("No Mistake")
+    
+    if st.button("Start Custom Game"):
+        st.session_state.custom_settings = {
+            "switches": switches,
+            "time_limit": time_limit,
+            "hints": hints,
+            "penalty": penalty,
+            "replay_speed": replay_speed,
+            "replayfaster": replayfaster,
+            "replaydecay": replaydecay,
+            "maxreplayspeed": maxreplayspeed,
+            "shown_switches": shown_switches,
+            "level_limit": level_limit,
+            "timer_no_reset": timer_no_reset,
+            "hide_timer": hide_timer,
+            "random_speed": random_speed,
+            "glitchy_state": glitchy_state,
+            "perfect_mode": perfect_mode
+        }
+        playcustom()
+
+def playcustom():
+    settings = st.session_state.custom_settings
+    st.session_state.max_time = settings["time_limit"]
+    st.session_state.start_time = time.time()
+    st.session_state.displayhints = settings["hints"]
+    st.session_state.currentlevel = 1
+    st.session_state.difficulty = "Custom"
+    SwitchRandomizer()
+    st.session_state.currentpage = "CustomGame"
+    st.rerun()
+
 def loadinggame(): #This shit is fucked
     startingdisp = "Starting Game..."
     startingbar = st.progress(0, text=startingdisp)
@@ -350,6 +422,8 @@ def endrun():
         examgr.append({f"User": {st.session_state.displayname}, "Level": st.session_state.currentlevel})
     elif st.session_state.difficulty == "Glitched":
         glitchgr.append({f"User": {st.session_state.displayname}, "Level": st.session_state.currentlevel})
+    elif st.session_state.difficulty == "Custom": #change the glitchgr
+        glitchgr.append({f"User": {st.session_state.displayname}, "Level": {st.session_state.currentlevel}, "Modifiers": {st.session_state.custom_settings}})
 
     st.session_state.difficulty = "None"
     if st.session_state.loggedin:
@@ -1051,6 +1125,54 @@ def SwitchGameGlitch(): #Not Done
                     st.session_state.displayhints -= 1
                     st.rerun()
 
+def SwitchGameCustom(): #In BETA, needs Testing. PS: This shit made go insane tryna code it
+    st.title(f"Level {st.session_state.currentlevel}")
+    settings = st.session_state.custom_settings
+    
+    if st.session_state.displayswitches:
+        st.write("Have fun!")
+        wait(3)
+        if settings["random_speed"]:
+            SwitchDisplayCustom(rng(0.1, 2.0), settings)
+        else:
+            SwitchDisplayCustom(settings["replay_speed"], settings)
+        st.session_state.displayswitches = False
+        st.rerun()
+    else:
+        if not settings["hide_timer"]:
+            elapsed_time = time.time() - st.session_state.start_time
+            remaining_time = max(0, st.session_state.max_time - elapsed_time)
+            progress = 1 - (remaining_time / st.session_state.max_time)
+            timertext = f"Time Left: {int(remaining_time)}s"
+            timerbar = st.progress(progress, text=timertext)
+            
+            if remaining_time <= 0:
+                st.error("Time ran out!")
+                if st.button("Back to Menu"):
+                    endrun()
+                return
+
+        num_switches = settings["switches"]
+        col1, col2 = st.columns(2)
+        
+        switches = []
+        with col1:
+            for i in range(0, num_switches, 2):
+                switches.append(st.toggle(str(i + 1)))
+        with col2:
+            for i in range(1, num_switches, 2):
+                switches.append(st.toggle(str(i + 1)))
+
+        if st.button("Submit"):
+            SwitchCheckCustom(switches, settings)
+        
+        st.write(f"Hints remaining: {st.session_state.displayhints}")
+        if st.session_state.displayhints > 0:
+            if st.button("Hint"):
+                st.session_state.displayswitches = True
+                st.session_state.displayhints -= 1
+                st.rerun()
+
 def SwitchGameExam(): #Idea: 100 switches and graded based on how many correct.
     pass 
 
@@ -1263,6 +1385,37 @@ def SwitchDisplayG():
         display_area.empty()
         wait(1)
 
+def SwitchDisplayCustom(speed, settings):
+    if settings["replayfaster"] and not settings["random_speed"]:
+        lvldispspeed = (st.session_state.currentlevel - 1) * settings["replaydecay"]
+        speed = max(settings["maxreplayspeed"], speed - lvldispspeed)
+    
+    display_area = st.empty()
+    
+    for repeat in range(1):
+        decoyswitches = switchlayout.copy()
+        shuffle(decoyswitches)
+        
+        shown = settings["shown_switches"]
+        if settings["glitchy_state"]:
+            for switch in decoyswitches:
+                numorstate = rng(1, 3)
+                if numorstate == 1:
+                    display_area.info(f"Switch {switch['SwitchNum']}: ???")
+                elif numorstate == 3:
+                    display_area.info(f"Switch ???: {switch['State']}")
+                else:
+                    display_area.info(f"Switch {switch['SwitchNum']}: {switch['State']}")
+                wait(speed)
+        else:
+            for i, switch in enumerate(decoyswitches):
+                if i < shown:
+                    display_area.info(f"Switch {switch['SwitchNum']}: {switch['State']}")
+                wait(speed)
+                
+        display_area.empty()
+        wait(1)
+
 def SwitchRandomizer():
     if st.session_state.difficulty == "Normal" or st.session_state.difficulty == "RememberThem" or st.session_state.difficulty == "PerfectAccuracy" or st.session_state.difficulty == "Haste" or st.session_state.difficulty == "HiddenSwitches" or st.session_state.difficulty == "Eminem" or st.session_state.difficulty == "Glitched" or st.session_state.difficulty == "Tutorial":
         for r in range(10):
@@ -1295,6 +1448,14 @@ def SwitchRandomizer():
     elif st.session_state.difficulty == "RNGesus":
         rngswitches = rng(2, 20)
         for r in range(rngswitches):
+            onoroff = rng(0, 1)
+            if onoroff == 0:
+                switchlayout.append({"SwitchNum": r + 1, "State": "On"})
+            else:
+                switchlayout.append({"SwitchNum": r + 1, "State": "Off"})
+    elif st.session_state.difficulty == "Custom":
+        settings = st.session_state.custom_settings
+        for r in range(settings["switches"]):
             onoroff = rng(0, 1)
             if onoroff == 0:
                 switchlayout.append({"SwitchNum": r + 1, "State": "On"})
@@ -1509,6 +1670,35 @@ def SwitchCheckG(switch1, switch2, switch3, switch4, switch5, switch6, switch7, 
     else:
         st.error("UH-0H B4D D3C####CION?!?!?!")
 
+def SwitchCheckCustom(switches, settings):
+    correct = sum(1 for switch, layout in zip(switches, switchlayout) 
+                 if (switch and layout["State"] == "On") or (not switch and layout["State"] == "Off"))
+
+    if correct == len(switchlayout):
+        if st.session_state.currentlevel >= settings["level_limit"]:
+            st.success("You've reached the level limit! Game Complete!")
+            if st.button("Back to Menu"):
+                endrun()
+            return
+            
+        st.success("Correct!")
+        st.session_state.currentlevel += 1
+        if not settings["timer_no_reset"]:
+            st.session_state.start_time = time.time()
+        st.session_state.displayswitches = True
+        switchlayout.clear()
+        SwitchRandomizer()
+        wait(1.5)
+        st.rerun()
+    else:
+        if settings["perfect_mode"]:
+            st.error("Wrong! Game Over!")
+            if st.button("Back to Menu"):
+                endrun()
+        else:
+            st.session_state.start_time -= settings["penalty"]
+            st.error("One of the Switches is wrong")
+
 def whatuthinkurdoing():
     lel = rng(1, 5)
     if lel == 1:
@@ -1521,9 +1711,6 @@ def whatuthinkurdoing():
         st.error("How about pay me 200$ and I'll let you in? Sound good right?")
     elif lel == 5:
         st.error("Keep trying, im almost finished")
-
-def achievementpage():
-    pass
 
 def leaderboard():
     st.title("Leaderboard") 
@@ -1569,13 +1756,32 @@ def playtutorial():
     st.rerun()
 
 def aboutme():
-    st.image("Other/HEHEHEHA.jpeg")
+    st.image("Other/Ok.jpg")
     st.title("About Me")
     st.write("Hiya there!, im Fajar or FajZ whatever you wanna call me with, an Indonesian Developer who made this dumb silly web project cuz im bored. anyway have fun xd.")
+
+def AchievementDirector():
+    pass
+
+def achievementpage():
+    st.title("Achievements")
+    for acv in achievements:
+        col1, col2 = st.columns(2)
+        with col1:
+            st.header(f"{acv['name']}")
+        with col2:
+            st.write(f"{acv['description']}")
 
 def UpdateBoard():
     st.title("Updates")
     stoggle("v1.0.0", """Changes:
 
         - Initial Release, nothing special.
+    """)
+
+    stoggle("v1.1.0", """Changes:
+
+        Brand New Mode! 
+        - Pure Memory Mode! Tests your remembering skills to a higher level!
+        - Fixed Sidebar sometimes overlapping with main page when in-game
     """)
