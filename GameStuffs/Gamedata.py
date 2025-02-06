@@ -33,10 +33,11 @@ bannedaccounts = [
 
 useraccounts = [
     {"username": "user", "password": "user"},
+    {"username": "Player", "password": "Player"},
 ]
 
 normallb = [
-    {"name": "FajZ", "level": "62"},
+    {"name": "FajZ", "level": "52"},
     {"name": "???", "level": "???"},
     {"name": "???", "level": "???"},
     {"name": "???", "level": "???"},
@@ -59,6 +60,11 @@ hardcorelb = [
     {"name": "???", "level": "???"},
     {"name": "???", "level": "???"},
     {"name": "???", "level": "???"},
+]
+
+achievements = [ # {"name": "", "description": ""},
+    {"name": "The Beginning", "description": "Reach level 50 in Normal Mode"},
+    {"name": "Experteer", "description": "Reach level 50 in Hardcore Mode"},
 ]
 
 achievementsinventory = []
