@@ -62,6 +62,19 @@ hardcorelb = [
     {"name": "???", "level": "???"},
 ]
 
+purememlb = [
+    {"name": "FajZ", "level": "31"},
+    {"name": "???", "level": "???"},
+    {"name": "???", "level": "???"},
+    {"name": "???", "level": "???"},
+    {"name": "???", "level": "???"},
+    {"name": "???", "level": "???"},
+    {"name": "???", "level": "???"},
+    {"name": "???", "level": "???"},
+    {"name": "???", "level": "???"},
+    {"name": "???", "level": "???"},
+]
+
 achievements = [ # {"name": "", "description": ""},
     {"name": "The Beginning", "description": "Reach level 50 in Normal Mode"},
     {"name": "Experteer", "description": "Reach level 50 in Hardcore Mode"},
