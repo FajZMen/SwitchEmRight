@@ -1,7 +1,7 @@
 from time import sleep as wait
 import streamlit as st
 import time
-from GameDirector.Director import getstates, login, leaderboard, leaderboardinfo, register, SwitchGame, SwitchGameHardcore, SwitchGamePureMemory, SwitchGameGodSpeed, SwitchGamePerfect, SwitchGameMakeHaste, SwitchGameSneaky, SwitchGameEminem, SwitchGameBrainDestroyer, SwitchGameRNGesus, SwitchGameGlitch, SwitchRandomizer, whatuthinkurdoing, mainpage, endrun, playnormal, playhardcore, hardcoredesc, purememorydesc, playpurememory, godspeeddesc, playgodspeed, perfectpercisiondesc, playperfectperc, makehastedesc, playmakehaste, sneakyswitchesdesc, playsneakyswitches, eminemdesc, playeminem, brainfucdesc, playbraindestroyer, rngesusdesc, playrngesus, glitcheddesc, playglitched, how2play, basicsh2p, switchstatesh2p, timerh2p, accountcreatortool, accountdeletortool, banaccounts, unbanaccount, gameresults, playtutorial, UpdateBoard, aboutme
+from GameDirector.Director import getstates, login, leaderboard, leaderboardinfo, register, SwitchGame, SwitchGameHardcore, SwitchGamePureMemory, SwitchGameGodSpeed, SwitchGamePerfect, SwitchGameMakeHaste, SwitchGameSneaky, SwitchGameEminem, SwitchGameBrainDestroyer, SwitchGameRNGesus, SwitchGameGlitch, SwitchGameCustom, SwitchRandomizer, whatuthinkurdoing, mainpage, endrun, playnormal, playhardcore, hardcoredesc, purememorydesc, playpurememory, godspeeddesc, playgodspeed, perfectpercisiondesc, playperfectperc, makehastedesc, playmakehaste, sneakyswitchesdesc, playsneakyswitches, eminemdesc, playeminem, brainfucdesc, playbraindestroyer, rngesusdesc, playrngesus, glitcheddesc, playglitched, customdesc, playcustom, how2play, basicsh2p, switchstatesh2p, timerh2p, accountcreatortool, accountdeletortool, banaccounts, unbanaccount, gameresults, playtutorial, UpdateBoard, aboutme, achievementpage
 from GameStuffs.Gamedata import switchlayout, useraccounts, bugreports, bannedaccounts, suggestions
 getstates()
 loggedin = st.session_state.get("loggedin", False)
@@ -20,6 +20,7 @@ if not loggedin and not developerlogin and not banned:
         password = st.text_input("Password", type="password")
         if st.button("Login"):
             login(username, password)
+        st.info("Lil' hint: If ur too lazy to make a new Account you can just Login with Username and Password 'Player', but you wont get any Progression using this")
 
     if loginpage == "Register":
         register()
@@ -28,7 +29,7 @@ if st.session_state.loggedin:
     if st.session_state.currentpage == "Main":
         gamepage = st.sidebar.radio(f"Welcome {st.session_state.displayname}", ["Play", "How2Play", "Leaderboard", "Report Bugs", "Suggestion", "Updates", "About Dev"])
         if gamepage == "Play":
-            difficulies = st.tabs(["Normal", "Hardcore"])
+            difficulies = st.tabs(["Normal", "Hardcore", "Pure Memory"])
             with difficulies[0]:
                 st.title("Normal Mode")
                 st.write("Play with the base settings and difficulty of the game (RECOMMENDED FOR NEW PLAYERS)")
@@ -38,6 +39,10 @@ if st.session_state.loggedin:
                 hardcoredesc()
                 if st.button("Play Hardcore"):
                     playhardcore()
+            with difficulies[2]:
+                purememorydesc()
+                if st.button("Play Pure Memory"):
+                    playpurememory()
         if gamepage == "How2Play":
             h2p = st.tabs(["How 2 Play", "Basics", "Switch States", "Timer"])
             with h2p[0]:
@@ -90,6 +95,11 @@ if st.session_state.loggedin:
             endrun()
         SwitchGameHardcore()
 
+    elif st.session_state.currentpage == "PureMemoryGame":
+        if st.sidebar.button("End Game"):
+            endrun()
+        SwitchGamePureMemory()
+
 elif st.session_state.developerlogin:
     if st.session_state.currentpage == "DevMain":
         st.sidebar.title("Welcome Developer FajZ!")
@@ -106,7 +116,7 @@ elif st.session_state.developerlogin:
                 timerh2p()
         if devpage == "Play":
             st.write("Hint: Hold SHIFT + MOUSE WHEEL to scroll through the Gamemodes")
-            devdiff = st.tabs(["Normal", "Hardcore", "Pure Memory", "GodSpeed", "Perfect Percision", "Make Haste", "Sneaky Switches", "Eminem", "Brain Aneurysm", "RNGesus", "Glitched", "Tutorial"])
+            devdiff = st.tabs(["Normal", "Hardcore", "Pure Memory", "GodSpeed", "Perfect Percision", "Make Haste", "Sneaky Switches", "Eminem", "Brain Aneurysm", "RNGesus", "Glitched", "Custom", "Tutorial"])
             with devdiff[0]:
                 st.title("Normal Mode")
                 st.write("Play with the base settings and difficulty of the game (RECOMMENDED FOR NEW PLAYERS)")
@@ -153,6 +163,8 @@ elif st.session_state.developerlogin:
                 if st.button("Play Glitched Mode"):
                     playglitched()
             with devdiff[11]:
+                customdesc()
+            with devdiff[12]:
                 st.title("Tutorial")
                 st.write("You Read all the Instructions on the How2Play Page and still confused? Then go ahead enter a Tutorial Game for a quick rundown!")
                 if st.button("Play Tutorial Mode"):
@@ -164,7 +176,7 @@ elif st.session_state.developerlogin:
             with lddevtab[1]:
                 leaderboardinfo()
         if devpage == "Achievements":
-            st.title("Achievements")
+            achievementpage()
         if devpage == "Updates":
             UpdateBoard()
         if devpage == "About Dev":
@@ -174,7 +186,7 @@ elif st.session_state.developerlogin:
             if st.session_state.developerpanelaccess == False:
                 getaccesbruh = st.text_input("To get access you must enter the Forbidden Password", type="password")
                 if st.button("Submit"):
-                    if getaccesbruh == "ThisIsTheApexDeveloperPanelPasswordToGetAccess2222222":
+                    if getaccesbruh == "ZSTL":
                         st.session_state.developerpanelaccess = True
                         st.rerun()
                     else:
@@ -240,7 +252,7 @@ elif st.session_state.developerlogin:
             endrun()
         SwitchGameHardcore()
 
-    elif st.session_state.currentpage == "PureMemoryGame":
+    elif st.session_state.currentpage == "DevPMGame":
         if st.sidebar.button("End Game"):
             endrun()
         SwitchGamePureMemory()
@@ -284,6 +296,11 @@ elif st.session_state.developerlogin:
         if st.sidebar.button("End Game"):
             endrun()
         SwitchGameGlitch()
+
+    elif st.session_state.currentpage == "CustomGame":
+        if st.sidebar.button("End Game"):
+            endrun()
+        SwitchGameCustom()
 
     elif st.session_state.currentpage == "No":
         devgamepage = st.tabs(["Game", "Cheat Panel"])
