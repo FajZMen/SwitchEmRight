@@ -4,7 +4,7 @@ from random import shuffle
 import streamlit as st
 import time
 from streamlit_extras.stoggle import stoggle
-from GameStuffs.Gamedata import switchlayout, switchlayouttest, useraccounts, bannedaccounts, normallb, hardcorelb, achievementsinventory, normalgr, hardcoregr, braindestroyergr, godspeedgr, perfectpercisiongr, makehastegr, sneakyswitchesgr, eminemgr, brainanuerysmgr, examgr, glitchgr, achievements
+from GameStuffs.Gamedata import switchlayout, switchlayouttest, useraccounts, bannedaccounts, normallb, hardcorelb, purememlb, achievementsinventory, normalgr, hardcoregr, braindestroyergr, godspeedgr, perfectpercisiongr, makehastegr, sneakyswitchesgr, eminemgr, brainanuerysmgr, examgr, glitchgr, achievements
 
 def getstates():
     if "currentlevel" not in st.session_state:
@@ -1714,7 +1714,7 @@ def whatuthinkurdoing():
 
 def leaderboard():
     st.title("Leaderboard") 
-    selectgamemode = st.selectbox("Select Game Mode", ["Normal", "Hardcore"])
+    selectgamemode = st.selectbox("Select Game Mode", ["Normal", "Hardcore", "Pure Memory"])
     
     col1, col2, col3 = st.columns(3)
     
@@ -1725,7 +1725,12 @@ def leaderboard():
     with col3:
         st.write(":checkered_flag: Level")
 
-    data = normallb if selectgamemode == "Normal" else hardcorelb
+    if selectgamemode == "Normal":
+        data = normallb
+    elif selectgamemode == "Hardcore":
+        data = hardcorelb
+    elif selectgamemode == "Pure Memory":
+        data = purememlb
     for i, entry in enumerate(data, 1):
         with col1:
             st.write(f"#{i}")
